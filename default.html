@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hộp Quà Giáng Sinh</title>
+    <style>
+        body {
+            background-color: #ff80ff; /* Màu hồng nền */
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Căn giữa hộp quà */
+        }
+
+        /* Container chứa hộp quà */
+        .box-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            perspective: 1000px; /* Để tạo hiệu ứng 3D cho hộp quà */
+        }
+
+        /* Hộp quà lập phương */
+        .box {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) rotateY(0deg);
+            transition: transform 1s ease-in-out; /* Hiệu ứng khi mở và đóng hộp */
+        }
+
+        /* Mặt của hộp */
+        .box .side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #f7c6d7; /* Màu hồng nhạt cho hộp */
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Tạo bóng đổ cho các mặt hộp */
+        }
+
+        /* Các mặt của hộp */
+        .box .front {
+            transform: translateZ(125px); /* Mặt trước */
+        }
+        .box .back {
+            transform: rotateY(180deg) translateZ(125px); /* Mặt sau */
+        }
+        .box .left {
+            transform: rotateY(-90deg) translateZ(125px); /* Mặt trái */
+        }
+        .box .right {
+            transform: rotateY(90deg) translateZ(125px); /* Mặt phải */
+        }
+        .box .top {
+            transform: rotateX(90deg) translateZ(125px); /* Mặt trên */
+        }
+        .box .bottom {
+            transform: rotateX(-90deg) translateZ(125px); /* Mặt dưới */
+        }
+
+        /* Nắp hộp */
+        .lid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #ff4d4d; /* Màu đỏ cho nắp hộp */
+            border-radius: 10px;
+            transition: opacity 1s ease-in-out; /* Mờ dần khi mở */
+            z-index: 2;
+        }
+
+        /* Cây thông Noel */
+        .christmas-tree {
+            position: absolute;
+            bottom: -180px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            opacity: 0;
+            transition: all 1s ease-in-out;
+        }
+
+        .box.open .christmas-tree {
+            opacity: 1;
+            width: 150px;
+            height: 200px;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/56/Christmas_tree.svg'); /* Hình ảnh cây thông Noel */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .box.open .lid {
+            opacity: 0; /* Mờ đi khi mở nắp */
+            top: 50%; /* Nắp sẽ di chuyển lên khi mở hộp */
+        }
+
+        /* Chữ Giáng Sinh */
+        .message {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff4d4d;
+            opacity: 0;
+            white-space: nowrap;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 3px;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .message span {
+            display: inline-block;
+            opacity: 0;
+            animation: showMessage 1s forwards;
+        }
+
+        /* Hiệu ứng chữ xuất hiện lần lượt */
+        @keyframes showMessage {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="box-container">
+        <div class="box" onclick="openBox()">
+            <div class="side front"></div>
+            <div class="side back"></div>
+            <div class="side left"></div>
+            <div class="side right"></div>
+            <div class="side top"></div>
+            <div class="side bottom"></div>
+            <div class="lid"></div> <!-- Nắp hộp -->
+            <div class="message" id="message">
+                <!-- Các chữ sẽ được thêm vào thông qua JavaScript -->
+            </div>
+        </div>
+        <!-- Cây thông Noel -->
+        <div class="christmas-tree" id="tree"></div>
+    </div>
+
+    <script>
+        // Hàm để mở hộp khi nhấn
+        function openBox() {
+            var box = document.querySelector('.box');
+            var message = document.getElementById('message');
+            var text = "Giáng Sinh An Lành Nhé Vợ Yêu"; // Nội dung chữ cần xuất hiện
+            var tree = document.getElementById('tree'); // Lấy phần tử cây thông
+
+            box.classList.toggle('open'); // Thêm hoặc bỏ lớp 'open' để thay đổi trạng thái hộp
+
+            // Khi hộp mở, hiển thị chữ
+            if (box.classList.contains('open')) {
+                // Tạo từng chữ và thêm vào phần tử .message
+                message.innerHTML = ''; // Xóa nội dung cũ (nếu có)
+                for (var i = 0; i < text.length; i++) {
+                    var span = document.createElement('span');
+                    span.innerText = text[i];
+                    span.style.animationDelay = (i * 0.3) + 's'; // Để các chữ xuất hiện lần lượt
+                    message.appendChild(span);
+                }
+                setTimeout(function() {
+                    message.style.opacity = 1; // Sau khi hộp mở, tăng độ mờ của chữ
+                }, 500); // Delay một chút sau khi mở hộp
+
+                // Cây thông Noel xuất hiện sau hộp mở
+                setTimeout(function() {
+                    tree.style.opacity = 1; // Cây thông sẽ hiển thị
+                    tree.style.bottom = "10px"; // Cây thông xuất hiện từ dưới lên
+                }, 1500); // Delay một chút sau khi chữ và ảnh xuất hiện
+            } else {
+                message.style.opacity = 0; // Nếu hộp đóng, ẩn chữ đi
+                tree.style.opacity = 0; // Nếu hộp đóng, ẩn cây thông đi
+                tree.style.bottom = "-180px"; // Đưa cây thông xuống dưới
+            }
+        }
+    </script>
+
+</body>
+</html>
